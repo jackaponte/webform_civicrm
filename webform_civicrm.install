@@ -135,6 +135,13 @@ function webform_civicrm_schema() {
 }
 
 /**
+ * Implements hook_uninstall().
+ */
+function webform_civicrm_uninstall() {
+  config_set('webform.settings', 'webform_table', FALSE);
+}
+
+/**
  * Implements hook_update_last_removed().
  */
 function webform_civicrm_update_last_removed() {
@@ -151,4 +158,13 @@ function webform_civicrm_update_1000() {
 
   // Delete variables.
   update_variable_del('webform_civicrm_help_seen');
+}
+
+/**
+ * Set the Webform submissions list to a hard-coded table instead of a View as a temporary fix.
+ * See https://www.drupal.org/node/2389537.
+ * To change, use Backdrop's Configuration management.
+ */
+function webform_civicrm_update_1001() {
+  config_set('webform.settings', 'webform_table', TRUE);
 }
