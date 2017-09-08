@@ -949,15 +949,8 @@ function wf_crm_results_display_options($contact_type) {
 function wf_crm_tokeninput_path() {
   static $ret;
   if (!$ret) {
-    // First see if the library is installed in Backdrop
-    $path = libraries_get_path('tokeninput');
-    if ($path && is_file(BACKDROP_ROOT . '/' . $path . '/src/jquery.tokeninput.js')) {
-      $ret = $path . '/src/jquery.tokeninput.js';
-    }
-    // If not, fall back on using the copy shipped with CiviCRM
-    else {
-      $ret = backdrop_get_path('module', 'civicrm') . '/../packages/jquery/plugins/jquery.tokeninput.js';
-    }
+    // Load the library using the copy shipped with CiviCRM
+    $ret = backdrop_get_path('module', 'civicrm') . '/../packages/jquery/plugins/jquery.tokeninput.js';
   }
   return $ret;
 }
