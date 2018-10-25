@@ -41,6 +41,11 @@ Contributing
 
 Pull-requests should be submitted with a clear description of the problem and steps to reproduce.
 
+Contributing
+------------
+
+Pull-requests should be submitted with a clear description of the problem and steps to reproduce.
+
 Credits
 -------
 
