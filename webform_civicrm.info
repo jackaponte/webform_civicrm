@@ -3,8 +3,6 @@ description = A powerful, flexible, user-friendly form builder for CiviCRM.
 backdrop = 1.x
 type = module
 package = CiviCRM
-dependencies[] = civicrm (>=4.4)
+dependencies[] = civicrm
 dependencies[] = webform
-dependencies[] = libraries
 dependencies[] = options_element
-# TODO: uncomment the dependency below once the module has been ported
