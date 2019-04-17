@@ -1971,7 +1971,7 @@ class wf_crm_webform_postprocess extends wf_crm_webform_base {
           }
         }
         catch (\Civi\Payment\Exception\PaymentProcessorException $e) {
-          drupal_set_message(ts('Payment approval failed with message :') . $e->getMessage(),'error');
+          backdrop_set_message(ts('Payment approval failed with message :') . $e->getMessage(),'error');
           CRM_Utils_System::redirect($this->getIpnRedirectUrl('cancel'));
         }
         $preApprovalParams = $paymentProcessor->getPreApprovalDetails($result['pre_approval_parameters']);
