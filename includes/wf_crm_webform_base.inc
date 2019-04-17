@@ -274,6 +274,27 @@ abstract class wf_crm_webform_base {
             $found = wf_crm_find_relations($this->ent['contact'][$to]['id'], $component['extra']['default_relationship']);
           }
           break;
+        case 'custom_ref':
+          $to = $component['extra']['default_relationship_to'];
+          if (!empty($this->ent['contact'][$to]['id'])) {
+            $found = wf_crm_find_custom_refs($this->ent['contact'][$to]['id'], $component['extra']['default_custom_ref']);
+          }
+          break;
+        case 'case_roles':
+          $to = $component['extra']['default_relationship_to'];
+          $case = $component['extra']['default_for_case'];
+          if (empty($this->ent['contact'][$c]['id'])) {
+            // load case client of case (if passed in URL) as default contact
+            $this->findCaseClientForDefaultContact($c);
+          }
+          if (!empty($this->ent['contact'][$to]['id']) && !empty($this->ent['case'][$case]['id'])) {
+            $found = wf_crm_find_case_roles($this->ent['contact'][$to]['id'], $this->ent['case'][$case]['id'], $component['extra']['default_case_roles']);
+            unset($this->ent['contact'][$c]['reload']);
+          }
+          else {
+            $this->ent['contact'][$c]['reload'] = TRUE;
+          }
+          break;
         case 'auto':
           $component['extra']['allow_create'] = FALSE;
           $found = array_keys(wf_crm_contact_search($this->node, $component, $filters, wf_crm_aval($this->ent, 'contact', array())));
@@ -905,6 +926,7 @@ abstract class wf_crm_webform_base {
 
   /**
    * Retrieve info needed for pre-filling a webform file field
+   *
    * @param string $fieldName
    * @param string|int $val: url or civi file id
    * @param string|null $entity: entity name
