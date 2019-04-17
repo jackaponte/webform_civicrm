@@ -884,8 +884,6 @@ abstract class wf_crm_webform_base {
 
   /**
    * CiviCRM JS can't be attached to a Backdrop form so have to manually re-add this during validation
-   *
-   * @return int|null
    */
   function addPaymentJs() {
     $currentVer = CRM_Core_BAO_Domain::version();
