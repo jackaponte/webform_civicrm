@@ -62,7 +62,7 @@ var wfCiviContact = (function ($, D) {
       function changeDefaultRelationTo() {
         var c = $(this).val(),
           types = $(this).closest('form').data('reltypes')[c],
-          placeholder = types.length ? false : '- ' + Drupal.ts('No relationship types available for these contact types') + ' -';
+          placeholder = types.length ? false : '- ' + Backdrop.ts('No relationship types available for these contact types') + ' -';
         CRM.utils.setOptions('#edit-extra-default-relationship', types, placeholder);
         // Provide default to circumvent "required" validation error
         if ($('#edit-extra-default').val() !== 'relationship' && !types.length && types[0].key === '') {
