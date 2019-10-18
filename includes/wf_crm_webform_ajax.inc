@@ -186,7 +186,7 @@ class wf_crm_webform_ajax extends wf_crm_webform_base {
     if (config_get('webform.settings', 'webform_submission_access_control') == 1) {
       $allowed_roles = array();
       foreach ($node->webform['roles'] as $rid) {
-        $allowed_roles[$rid] = isset($user->roles[$rid]) ? TRUE : FALSE;
+        $allowed_roles[$rid] = in_array($rid, $user->roles) ? TRUE : FALSE;
       }
       if (array_search(TRUE, $allowed_roles) === FALSE) {
         return FALSE;
