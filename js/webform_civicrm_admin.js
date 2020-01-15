@@ -568,7 +568,7 @@ var wfCiviAdmin = (function ($, D) {
    * TODO: Move more code here! Backdrop's version of jQuery is ancient.
    * TODO: change 'cj' to 'CRM.$' when we drop support for Civi v4.4
    */
-  cj(function($) {
+  CRM.$(function($) {
     // Inline help
     $('#wf-crm-configure-form, #webform-component-edit-form').on('click', 'a.helpicon', function () {
       var topic = $(this).attr('href').substr(1);
