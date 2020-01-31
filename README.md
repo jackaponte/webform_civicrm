@@ -16,7 +16,8 @@ settings.
 Version Compatibility
 ---------------------
 
-This module's 1.x version is compatible with Backdrop 1.x, Webform 1.x and CiviCRM 4.4 through 5.x.
+The 1.x-4.x version is compatible with Backdrop 1.x, Webform 1.x-4.19+ and CiviCRM 4.4 through 5.x.
+The 1.x-5.x version is compatible with Backdrop 1.x, Webform 1.x-4.19+ and CiviCRM 5.12+.
 
 Documentation
 -------------
