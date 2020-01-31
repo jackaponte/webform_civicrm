@@ -3,6 +3,6 @@ description = A powerful, flexible, user-friendly form builder for CiviCRM.
 backdrop = 1.x
 type = module
 package = CiviCRM
-php = 7.0
-dependencies[] = civicrm (>=5.12)
-dependencies[] = webform (>=4.19)
+dependencies[] = civicrm
+dependencies[] = webform (>=4.12)
+
