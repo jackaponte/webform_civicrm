@@ -253,7 +253,7 @@ function _webform_edit_civicrm_contact($component) {
       '#parents' => array('extra', 'default_custom_ref'),
     );
   }
-
+  
   $case_count = isset($data['case']['number_of_case']) ? $data['case']['number_of_case'] : 0;
   if ($case_count > 0) {
     $form['defaults']['default']['#options']['case_roles'] = t('Case roles');
@@ -347,7 +347,7 @@ function _webform_edit_civicrm_contact($component) {
     '#type' => 'select',
     '#multiple' => TRUE,
     '#title' => t('Tags'),
-    '#options' => array('' => '- ' . t('None') . ' -') + wf_crm_get_tags('contact'),
+    '#options' => array('' => '- ' . t('None') . ' -') + CRM_Core_BAO_Tag::getTags("civicrm_contact", $tags, NULL, '- '),
     '#default_value' => $component['extra']['filters']['tag'],
     '#description' => t('Listed contacts must be have at least one of the selected tags (leave blank to not filter by tag).'),
   );
@@ -887,56 +887,55 @@ function wf_crm_update_existing_component(&$component, $enabled, $data) {
  * @return array
  */
 function wf_crm_find_relations($cid, $types = array(), $current = TRUE) {
-  $found = $allowed = $type_ids = [];
+  $found = $allowed = array();
   $cid = (int) $cid;
   static $employer_type = 0;
   if ($cid) {
     if (!$employer_type && $current) {
       $employer_type = wf_crm_aval(wf_civicrm_api('relationshipType', 'get', array('name_a_b' => 'Employee of', 'return' => 'id')), 'id');
     }
+    $type_ids = '';
     foreach ($types as $t) {
-      list($type, $a) = explode('_', $t);
+      list($type, $a_b) = explode('_', $t);
       // Put current employer first in the list
       if ($type == $employer_type && $current) {
-        $search_key = $a == 'b' ? 'id' : 'employer_id';
-        // Note: inconsistency in api3 - search key is "employer_id" but return key is "current_employer_id"
-        $employer = wf_crm_apivalues('contact', 'get', [
-          $search_key => $cid,
-          'sequential' => 1,
-        ], $a == 'b' ? 'current_employer_id' : 'id');
-        if ($employer) {
-          $found[$employer[0]] = $employer[0];
+        $sql = "SELECT id, employer_id
+        FROM civicrm_contact
+        WHERE id = $cid OR employer_id = $cid";
+        $dao = CRM_Core_DAO::executeQuery($sql);
+        $employer = $dao->id == $cid ? $dao->employer_id : $dao->id;
+        while ($dao->fetch()) {
+          $found[$employer] = $employer;
         }
+        $dao->free();
       }
-      $type_ids[] = $type;
-      if ($a == 'a' || $a == 'r') {
+      $type_ids .= ($type_ids ? ',' : '') . $type;
+      if ($a_b == 'a' || $a_b == 'r') {
         $allowed[] = $type . '_a';
       }
-      if ($a == 'b' || $a == 'r') {
+      if ($a_b == 'b' || $a_b == 'r') {
         $allowed[] = $type . '_b';
       }
     }
-    $params = [
-      'return' => ['contact_id_a', 'contact_id_b', 'relationship_type_id', 'end_date'],
-      'contact_id_a' => $cid,
-      'contact_id_b' => $cid,
-      'options' => ['or' => [['contact_id_a', 'contact_id_b']]],
-    ];
+    $typeClause = '';
     if ($type_ids) {
-      $params['relationship_type_id'] = ['IN' => $type_ids];
+      $typeClause = "AND relationship_type_id IN ($type_ids)";
     }
+    $sql = "SELECT relationship_type_id, contact_id_a, contact_id_b
+      FROM civicrm_relationship
+      WHERE (contact_id_a = $cid OR contact_id_b = $cid) $typeClause";
     if ($current) {
-      $params['is_active'] = 1;
+      $sql .= " AND is_active = 1 AND (end_date > CURDATE() OR end_date IS NULL)";
     }
-    foreach (wf_crm_apivalues('relationship', 'get', $params) as $relationship) {
-      $a = $relationship['contact_id_a'] == $cid ? 'b' : 'a';
-      if (!$current || empty($relationship['end_date']) || strtotime($relationship['end_date']) > time()) {
-        if (!$allowed || in_array($relationship['relationship_type_id'] . '_' . $a, $allowed)) {
-          $c = $relationship["contact_id_$a"];
-          $found[$c] = $c;
-        }
+    $dao = CRM_Core_DAO::executeQuery($sql);
+    while ($dao->fetch()) {
+      $a_b = $dao->contact_id_a == $cid ? 'b' : 'a';
+      if (!$allowed || in_array($dao->relationship_type_id . '_' . $a_b, $allowed)) {
+        $c = $dao->{"contact_id_$a_b"};
+        $found[$c] = $c;
       }
     }
+    $dao->free();
   }
   return $found;
 }
