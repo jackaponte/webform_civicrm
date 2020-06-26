@@ -197,7 +197,7 @@ class wf_crm_admin_form {
       '#value' => t('Change Form Settings'),
       '#prefix' => '<div id="no-js-button-wrapper" class="messages warning">',
       '#suffix' => '<div>' . t('You have Javascript disabled. You will need to click this button after changing any option to see the result.') . '</div></div>',
-    );
+    ];
     $this->form['webform_civicrm'] = ['#type' => 'vertical_tabs'];
     // Display intro help on first view
     if (!config_get('webform_civicrm.settings', 'webform_civicrm_help_seen')) {
